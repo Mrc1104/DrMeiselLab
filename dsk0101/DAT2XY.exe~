@@ -1,0 +1,9 @@
+#! /bin/bash
+
+
+for i in {00,01,02,03,04}
+	 do
+	     ./a.out tag00$i.dat
+	     mv tag00$i.xy xy.dir
+	 done 
+

@@ -1,0 +1,181 @@
+
+Saving ev_e as file data/evt0104/ev_e.010.
+DEBUG(save) time 17:55:11
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.010.
+DEBUG(save) time 17:55:11
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.010.
+DEBUG(save) time 17:55:11
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.010.
+DEBUG(save) time 17:55:11
+DEBUG(save) ev_route 
+000002
+003765:004103:002018:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000112
+Saving bci as file data/evt0104/bci.010.
+DEBUG(save) time 17:55:11
+Saving dtime as file data/evt0104/dtime.010.
+DEBUG(save) time 17:55:11
+Saving ev_e as file data/evt0104/ev_e.011.
+DEBUG(save) time 17:55:32
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.011.
+DEBUG(save) time 17:55:32
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.011.
+DEBUG(save) time 17:55:32
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.011.
+DEBUG(save) time 17:55:32
+DEBUG(save) ev_route 
+000002
+003866:004067:001971:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000094
+Saving bci as file data/evt0104/bci.011.
+DEBUG(save) time 17:55:32
+Saving dtime as file data/evt0104/dtime.011.
+DEBUG(save) time 17:55:32
+Saving ev_e as file data/evt0104/ev_e.012.
+DEBUG(save) time 17:55:52
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.012.
+DEBUG(save) time 17:55:52
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.012.
+DEBUG(save) time 17:55:52
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.012.
+DEBUG(save) time 17:55:52
+DEBUG(save) ev_route 
+000000
+003768:004088:002034:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000110
+Saving bci as file data/evt0104/bci.012.
+DEBUG(save) time 17:55:52
+Saving dtime as file data/evt0104/dtime.012.
+DEBUG(save) time 17:55:52
+Saving ev_e as file data/evt0104/ev_e.013.
+DEBUG(save) time 17:56:13
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.013.
+DEBUG(save) time 17:56:13
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.013.
+DEBUG(save) time 17:56:13
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.013.
+DEBUG(save) time 17:56:13
+DEBUG(save) ev_route 
+000006
+003839:004146:001921:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000088
+Saving bci as file data/evt0104/bci.013.
+DEBUG(save) time 17:56:13
+Saving dtime as file data/evt0104/dtime.013.
+DEBUG(save) time 17:56:13
+Saving ev_e as file data/evt0104/ev_e.014.
+DEBUG(save) time 17:56:33
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.014.
+DEBUG(save) time 17:56:33
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.014.
+DEBUG(save) time 17:56:33
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.014.
+DEBUG(save) time 17:56:33
+DEBUG(save) ev_route 
+000002
+003857:004098:001941:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000102
+Saving bci as file data/evt0104/bci.014.
+DEBUG(save) time 17:56:33
+Saving dtime as file data/evt0104/dtime.014.
+DEBUG(save) time 17:56:33
+Saving ev_e as file data/evt0104/ev_e.015.
+DEBUG(save) time 17:56:53
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.015.
+DEBUG(save) time 17:56:53
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.015.
+DEBUG(save) time 17:56:53
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.015.
+DEBUG(save) time 17:56:53
+DEBUG(save) ev_route 
+000002
+003849:004094:001958:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000097
+Saving bci as file data/evt0104/bci.015.
+DEBUG(save) time 17:56:53
+Saving dtime as file data/evt0104/dtime.015.
+DEBUG(save) time 17:56:53
+Saving ev_e as file data/evt0104/ev_e.016.
+DEBUG(save) time 17:57:14
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.016.
+DEBUG(save) time 17:57:14
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.016.
+DEBUG(save) time 17:57:14
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.016.
+DEBUG(save) time 17:57:14
+DEBUG(save) ev_route 
+000001
+003733:004133:002028:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000105
+Saving bci as file data/evt0104/bci.016.
+DEBUG(save) time 17:57:14
+Saving dtime as file data/evt0104/dtime.016.
+DEBUG(save) time 17:57:14
+Saving ev_e as file data/evt0104/ev_e.017.
+DEBUG(save) time 17:57:35
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.017.
+DEBUG(save) time 17:57:35
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.017.
+DEBUG(save) time 17:57:35
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.017.
+DEBUG(save) time 17:57:35
+DEBUG(save) ev_route 
+000001
+003806:004068:002024:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000101
+Saving bci as file data/evt0104/bci.017.
+DEBUG(save) time 17:57:35
+Saving dtime as file data/evt0104/dtime.017.
+DEBUG(save) time 17:57:35
+Saving ev_e as file data/evt0104/ev_e.018.
+DEBUG(save) time 17:57:57
+DEBUG(save) File ev_e contains data from adc 0
+Saving ev_psd as file data/evt0104/ev_psd.018.
+DEBUG(save) time 17:57:57
+DEBUG(save) File ev_psd contains data from adc 1
+Saving ev_tof as file data/evt0104/ev_tof.018.
+DEBUG(save) time 17:57:57
+DEBUG(save) File ev_tof contains data from adc 2
+Saving ev_route as file data/evt0104/ev_route.018.
+DEBUG(save) time 17:57:57
+DEBUG(save) ev_route 
+000000
+003764:004070:002066:000000:000000:000000
+000000:000000:000000:000000:000000:000000
+000100
+Saving bci as file data/evt0104/bci.018.
+DEBUG(save) time 17:57:57
+Saving dtime as file data/evt0104/dtime.018.
+DEBUG(save) time 17:57:57

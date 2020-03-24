@@ -5,11 +5,16 @@
  * Name: Ryan Conaway
  * Email: mc321015@ohio.edu
  * Date: 3/9/2020
- * Last Modified: 3/10/2020
+ * Last Modified: 3/23/2020
  * Discription: Runs ALthick data through the code required for detector efficiency calculations
  *
  * Notes:
- *		Graph DiffSpect to verify code works
+ *		
+ *
+ * On Deck:
+ *		Recheck other AlThick stuff
+ *		Compute the Detector Efficiency (!)
+ *		Background Subtraction?
  ******************************************************/
 
 #include <cstdlib>

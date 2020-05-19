@@ -1,19 +1,24 @@
 /********************************************************
  * File: Main.C
  * Brief: Runs AlThick data through analysis code; Time Calibration an Time to Energy conversion code
- * 
+ *
  * Name: Ryan Conaway
  * Email: mc321015@ohio.edu
  * Date: 3/9/2020
- * Last Modified: 3/23/2020
+ * Last Modified: 5/20/2020
  * Discription: Runs ALthick data through the code required for detector efficiency calculations
  *
  * Notes:
- *		
+ *
  *
  * On Deck:
  *		Recheck other AlThick stuff
- *		Compute the Detector Efficiency (!)
+ *			No error in my AlThick Stuff!!!
+ *			The energy bin is just odd, its in 10 keV (ie x-axis scale: 100 -> 1MeV)
+ * 		Compute the Detector Efficiency (!)
+ *			I need the U235 spectrum to complete it
+ *			Also, disk6024 does not have a total charge (boo). Will need to go back and do thios for a different run (on flashdrive)
+ *			
  *		Background Subtraction?
  ******************************************************/
 
@@ -21,11 +26,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 using namespace std;
 
 void det(string path_to_file, TH1F* histo);
 void read_in_data(string _path_to_file, TH1F* histo);
 void disk6024(string path_to_dir);
+void read_evt_files(string path_to_evtFile);
+
 Double_t GetGammaPeak(TH1F* histo);
 void graph(TCanvas* canvas, TH1F* histo, const char* xTitle, const char* yTitle);
 
@@ -38,6 +46,14 @@ void DTLC_Residual(TH1F* hDiffSpect);
 void CountsVsTime(TH1F* histo, string Run_Det, string path_to_shiftedTC);
 void DougCode(string Run_Det, string path_to_CountsVsTime);
 
+void Plot_Saved_Histo(string path_to_savedHisto);
+void DetectorEfficiency(string path_to_CountsVsEnergy);
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /******************************************************
  * Function: Main()
@@ -45,17 +61,54 @@ void DougCode(string Run_Det, string path_to_CountsVsTime);
  *
  * SubFunctions:
  *			disk6024()
+ *			TimeCalibration()
+ *			DifferentialTimeCalibration()
+ *			DetectorEfficiency()
  * Parameters:
- *
+ *	None
+ * Notes:
+ * 	DetectorEfficiency() is incomplete
  *****************************************************/
 void Main(){
 
-	disk6024("/home/mrc/Documents/DrMeiselLab/AlThick/dsk6024/xy.dir");
+	//Plot_Saved_Histo("/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det1_TimevsChannel.txt");
+
+	//disk6024("/home/mrc1104/Documents/DrMeiselLab/AlThick/dsk6024/xy.dir");
 	//TimeCalibration();
 	//DifferentialTimeCalibration();
-	
+	DetectorEfficiency("/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det1_CountsvsEnergy.txt");
+
 	return EXIT_SUCCESS;
 } //Main()
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/******************************************************
+ * Function: void read_evt_files(string path_to_evtFile)
+ * Brief: Files that are not stored in evt-files have several columns of data and have to be read in seperately
+ * SubFunctions:
+ *			None
+ * Parameters:
+ *			string path_to_evtFile -- the path to the evt file
+ *****************************************************/
+void read_evt_files(string path_to_evtFile){
+
+	string path;
+	fData.open(path);
+	
+
+
+
+
+
+}
+
 
 
 /******************************************************
@@ -70,7 +123,7 @@ void Main(){
 
 void disk6024(string path_to_dir){
 
-	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the 
+	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the
 	const char* yTitle = "Counts";
 
 	//Detector 1 -- dsk6024
@@ -78,31 +131,31 @@ void disk6024(string path_to_dir){
 	det(path_to_dir + "/tag0014.xy", hDet1);
 	TCanvas *cDisk6024_Det1=new TCanvas("cDisk6024_Det1","dsk6024_Det1");
 	graph(cDisk6024_Det1, hDet1,xTitle,yTitle);
-	//Double_t Det1GammaPeak = GetGammaPeak(hDet1);
-	//AdjustTC("Disk6024_Det1",6.93,Det1GammaPeak);
-	CountsVsTime(hDet1,"Disk6024_Det1","/home/mrc/Documents/DrMeiselLab/AlThick/Disk6024_Det1_AdjustedTC.txt");
-	DougCode("Disk6024_Det1", "/home/mrc/Documents/DrMeiselLab/AlThick/Disk6024_Det1_TimevsChannel.txt"); 
+	Double_t Det1GammaPeak = GetGammaPeak(hDet1);
+	AdjustTC("Disk6024_Det1",6.93,Det1GammaPeak);
+	CountsVsTime(hDet1,"Disk6024_Det1","/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det1_AdjustedTC.txt");
+	DougCode("Disk6024_Det1", "/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det1_TimevsChannel.txt");
 
-	
+
 	//Detector 2 -- dsk6024
 	TH1F *hDet2 =new TH1F("hDet2", "Disk6024 Det2",4096,0,4095);
 	det(path_to_dir + "/tag0024.xy", hDet2);
 	TCanvas *cDisk6024_Det2=new TCanvas("cDisk6024_Det2","dsk6024_Det2");
 	graph(cDisk6024_Det2, hDet2,xTitle,yTitle);
-	//Double_t Det2GammaPeak = GetGammaPeak(hDet2);
-	//AdjustTC("Disk6024_Det2",6.93,Det2GammaPeak);
-	CountsVsTime(hDet2,"Disk6024_Det2","/home/mrc/Documents/DrMeiselLab/AlThick/Disk6024_Det2_AdjustedTC.txt");
-	DougCode("Disk6024_Det2", "/home/mrc/Documents/DrMeiselLab/AlThick/Disk6024_Det2_TimevsChannel.txt"); 
-	
+	Double_t Det2GammaPeak = GetGammaPeak(hDet2);
+	AdjustTC("Disk6024_Det2",6.93,Det2GammaPeak);
+	CountsVsTime(hDet2,"Disk6024_Det2","/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det2_AdjustedTC.txt");
+	DougCode("Disk6024_Det2", "/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det2_TimevsChannel.txt");
+
 	//Detector 3 -- dsk6024
 	TH1F *hDet3 =new TH1F("hDet3", "Disk6024 Det3",4096,0,4095);
 	det(path_to_dir + "/tag0034.xy", hDet3);
 	TCanvas *cDisk6024_Det3=new TCanvas("cDisk6024_Det3","dsk6024_Det3");
 	graph(cDisk6024_Det3, hDet3,xTitle,yTitle);
-	//Double_t Det3GammaPeak = GetGammaPeak(hDet3);
-	//AdjustTC("Disk6024_Det3",6.93,Det3GammaPeak);
-	CountsVsTime(hDet3,"Disk6024_Det3","/home/mrc/Documents/DrMeiselLab/AlThick/Disk6024_Det3_AdjustedTC.txt");
-	DougCode("Disk6024_Det3", "/home/mrc/Documents/DrMeiselLab/AlThick/Disk6024_Det3_TimevsChannel.txt"); 
+	Double_t Det3GammaPeak = GetGammaPeak(hDet3);
+	AdjustTC("Disk6024_Det3",6.93,Det3GammaPeak);
+	CountsVsTime(hDet3,"Disk6024_Det3","/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det3_AdjustedTC.txt");
+	DougCode("Disk6024_Det3", "/home/mrc1104/Documents/DrMeiselLab/AlThick/Disk6024_Det3_TimevsChannel.txt");
 
 	return;
 } //disk6024
@@ -117,24 +170,24 @@ void disk6024(string path_to_dir){
  ***************************************************void**/
 
 void TimeCalibration(){
-	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the 
+	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the
 	const char* yTitle = "Counts";
 
 	TH1F *hTLC=new TH1F("hTLC","Linear Time Calibration",4096,0,4095);
-	read_in_data("/home/mrc/Documents/DrMeiselLab/AlThick/PriorCodes/tag0010.xy",hTLC);
+	read_in_data("/home/mrc1104/Documents/DrMeiselLab/AlThick/PriorCodes/tag0010.xy",hTLC);
 	TCanvas *cTLC=new TCanvas("TLC", "Linear Time Calibration");
 	graph(cTLC,hTLC, xTitle,yTitle);
-	
+
 	//There exists four files for the random sprectrum: tag0200,tag0201,tag0202, tag0203. They need to be added to create the Total random (hRandom)
-	
+
 	TH1F *hRandom1=new TH1F("hRandom1","Random Source1",4096,0,4095);
-	read_in_data("/home/mrc/Documents/DrMeiselLab/AlThick/PriorCodes/tag0200.xy",hRandom1);
+	read_in_data("/home/mrc1104/Documents/DrMeiselLab/AlThick/PriorCodes/tag0200.xy",hRandom1);
 	TH1F *hRandom2=new TH1F("hRandom2","Random Source2",4096,0,4095);
-	read_in_data("/home/mrc/Documents/DrMeiselLab/AlThick/PriorCodes/tag0201.xy",hRandom2);
+	read_in_data("/home/mrc1104/Documents/DrMeiselLab/AlThick/PriorCodes/tag0201.xy",hRandom2);
 	TH1F *hRandom3=new TH1F("hRandom3","Random Source3",4096,0,4095);
-	read_in_data("/home/mrc/Documents/DrMeiselLab/AlThick/PriorCodes/tag0202.xy",hRandom3);
+	read_in_data("/home/mrc1104/Documents/DrMeiselLab/AlThick/PriorCodes/tag0202.xy",hRandom3);
 	TH1F *hRandom4=new TH1F("hRandom4","Random Source4",4096,0,4095);
-	read_in_data("/home/mrc/Documents/DrMeiselLab/AlThick/PriorCodes/tag0203.xy",hRandom4);
+	read_in_data("/home/mrc1104/Documents/DrMeiselLab/AlThick/PriorCodes/tag0203.xy",hRandom4);
 
 	//Total Random Spectrum
 	TH1F *hRandom = new TH1F("hRandom", "hRandom",4096,0,4095);
@@ -144,7 +197,7 @@ void TimeCalibration(){
 	hRandom->Add(hRandom4);
 	TCanvas *cR=new TCanvas("cR", "Random");
 	graph(cR,hRandom, xTitle,yTitle);
-	
+
 	CreateDifferentialCalibration(hRandom);
 
 
@@ -153,18 +206,18 @@ void TimeCalibration(){
 
 /******************************************************
  * Function: CreateDifferentialCalibration()
- * Brief: Fills in the Linear Time Calibration with the Random Source runs to create a differential 
- * time calibration. 
+ * Brief: Fills in the Linear Time Calibration with the Random Source runs to create a differential
+ * time calibration.
  *
  * SubFunctions:
- *			
+ *
  * Parameters:
  * 			TH1F* hRandom -- random spectrum
 
  *****************************************************/
 void CreateDifferentialCalibration(TH1F* hRandom){
 	ofstream fDiffSpect;
-	fDiffSpect.open("/home/mrc/Documents/DrMeiselLab/AlThick/DiffSpect.txt");
+	fDiffSpect.open("/home/mrc1104/Documents/DrMeiselLab/AlThick/DiffSpect.txt");
 	//Calculations
 	Double_t S;
 	Double_t T = 200; //ns
@@ -178,11 +231,11 @@ void CreateDifferentialCalibration(TH1F* hRandom){
 			 Mean2 = 1163.57,
 			 Mean3 = 1981.21,
 			 Mean4 = 2791.87;
-	Double_t R_12 = T/hRandom->Integral(Mean1+1,Mean2);  
-	Double_t R_23 = T/hRandom->Integral(Mean2+1,Mean3);  
-	Double_t R_34 = T/hRandom->Integral(Mean3+1,Mean4);  
-	//Double_t R_4 = T/hRandom->Integral(Mean4+1,3500);  
-	Double_t R_4 = T/hRandom->Integral(Mean4+1,3500);  
+	Double_t R_12 = T/hRandom->Integral(Mean1+1,Mean2);
+	Double_t R_23 = T/hRandom->Integral(Mean2+1,Mean3);
+	Double_t R_34 = T/hRandom->Integral(Mean3+1,Mean4);
+	//Double_t R_4 = T/hRandom->Integral(Mean4+1,3500);
+	Double_t R_4 = T/hRandom->Integral(Mean4+1,3500);
 
 	/* The Differential Time Calibration is created by reading through the random source spectrum */
 	/* and integrting between the Linear Time Calibration peaks (a la Mean1 - Mean4). At each TLC */
@@ -196,7 +249,7 @@ void CreateDifferentialCalibration(TH1F* hRandom){
 					fDiffSpect << i << " " << Sum << endl;
 		}
 		if(i>Mean1 & i<=Mean2-1){
-			S = hRandom->Integral(i+1,Mean2); 
+			S = hRandom->Integral(i+1,Mean2);
 			Sum =  3*T + S*R_12;
 			fDiffSpect << i << " " << Sum << endl;
 		}
@@ -221,7 +274,7 @@ void CreateDifferentialCalibration(TH1F* hRandom){
 		}
 		/*if(i > 2791 ){// This needs fixed
 			S = hRandom->Integral(Mean4+1,i);
-			Sum = 200 - (S*R_34); 
+			Sum = 200 - (S*R_34);
 			fDiffSpect << i << " " << Sum << endl;
 			//cout << i << " " << Sum << " " << S << endl;
 			}*/
@@ -236,7 +289,7 @@ void CreateDifferentialCalibration(TH1F* hRandom){
 			}
 	}
 	fDiffSpect.close();
-	
+
 
 	return;
 } //CreateDifferentialCalibration()
@@ -244,10 +297,10 @@ void CreateDifferentialCalibration(TH1F* hRandom){
 
 /******************************************************
  * Function: DifferentialCalibration()
- * Brief: Draws the Differential Time Calibration and creates residual to check accuracy 
+ * Brief: Draws the Differential Time Calibration and creates residual to check accuracy
  *
  * SubFunctions:
- *			
+ *
  * Parameters:
  * 			TH1F* hRandom -- random spectrum *
  * Note:
@@ -255,17 +308,17 @@ void CreateDifferentialCalibration(TH1F* hRandom){
  * Time Calibration so that the b-intercept aligns with the run-specific gamma peak!
  *****************************************************/
 void DifferentialTimeCalibration(){
-	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the 
+	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the
 	const char* yTitle = "Counts";
 
 	TH1F *hDiffSpect=new TH1F("hDiffSpect","hDiffSpect",4096,0,4095);
-	read_in_data("/home/mrc/Documents/DrMeiselLab/AlThick/DiffSpect.txt",hDiffSpect);
+	read_in_data("/home/mrc1104/Documents/DrMeiselLab/AlThick/DiffSpect.txt",hDiffSpect);
 	TCanvas *cDiffSpect=new TCanvas("cDiffSpect","cDiffSpect");
 	graph(cDiffSpect,hDiffSpect, xTitle,yTitle);
-	
-	/*RESIDUAL    
-	 * This method for detemrining the residual seems to work. However, I need to adjust 
-	 * my hDiffSpect so that it crosses time=0 at the location of the gamma peak.	
+
+	/*RESIDUAL
+	 * This method for detemrining the residual seems to work. However, I need to adjust
+	 * my hDiffSpect so that it crosses time=0 at the location of the gamma peak.
 	 * This location is going to be run specific.
 	 */
 
@@ -277,13 +330,15 @@ void DifferentialTimeCalibration(){
 
 /******************************************************
  * Function: det()
- * Brief: Opens up and creates histograms for the data file 
+ * Brief: Opens up and creates histograms for the data file
  *
- * SubFunctions:	
+ * SubFunctions:
  *			read_in_data()
  * Parameters:
  *			string path_to_file -- location of the file in current directory (wrts parent function) to open
- 			TH1F* histo -- histogram to store data
+ *			TH1F* histo -- histogram to store data
+ * Note:
+ * 			In hindsight, this was dumb
  *****************************************************/
 void det(string path_to_file, TH1F* histo){
 	read_in_data(path_to_file, histo);
@@ -292,14 +347,15 @@ void det(string path_to_file, TH1F* histo){
 
 /******************************************************
  * Function: read_in_data()
- * Brief: reads in file into a histogram 
+ * Brief: reads in file into a histogram
  *
  * SubFunctions:
- *			
+ *
  * Parameters:
  *			string path_to_file -- location of file to open and read in data from
  *			TH1F* histo -- histogram to store data
  *
+ * Note: !!!!     Only can be used for single variable data      !!!!!
  *****************************************************/
 void read_in_data(string path_to_file, TH1F* histo){
 	ifstream file;
@@ -328,7 +384,7 @@ void read_in_data(string path_to_file, TH1F* histo){
  * Brief: graphs in histogram
  *
  * SubFunctions:
- *			
+ *
  * Parameters:
  * 			TCanvas* canvas -- Canvas to draw on
  * 			TH1F* histo -- histogram to be drawn
@@ -345,7 +401,7 @@ void graph(TCanvas* canvas, TH1F* histo, const char* xTitle, const char* yTitle)
 
 /******************************************************
  * Function: GetGammaPeak()
- * Brief: Obtains the x-value of the gamma peak. Necessary for adjusting the Differential 
+ * Brief: Obtains the x-value of the gamma peak. Necessary for adjusting the Differential
  * Time Spectrum.
  *
  * SubFunctions:
@@ -359,7 +415,7 @@ Double_t GetGammaPeak(TH1F* histo){
 	Double_t binmaxY = histo->GetMaximumBin();
 	Double_t binmaxX = histo->GetBinCenter(binmaxY);
 	/* //Visual Check
-	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the 
+	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the
 	const char* yTitle = "Counts";
 	TCanvas *cZOOM=new TCanvas("cZOOM","cZOOM");
 	graph(cZOOM,histo,xTitle,yTitle);
@@ -370,7 +426,7 @@ Double_t GetGammaPeak(TH1F* histo){
 
 /******************************************************
  * Function: AdjustTC()
- * Brief: Obtains the x-value of the gamma peak. Necessary for adjusting the Differential 
+ * Brief: Obtains the x-value of the gamma peak. Necessary for adjusting the Differential
  * Time Spectrum.
  *
  * SubFunctions:
@@ -379,10 +435,10 @@ Double_t GetGammaPeak(TH1F* histo){
  * Parameters:
  *			distance_to_detector
  *			DTLC_Residual();
- * Note: The distance to decide T0 (distance to detector) might be different so I left it as an 
+ * Note: The distance to decide T0 (distance to detector) might be different so I left it as an
  * input value in the form of distance to detector
  *
- * Comments: So the Differential Time Calibration should go to zero, however it does not. 
+ * Comments: So the Differential Time Calibration should go to zero, however it does not.
  * Therefore, where the calibrations stops changing, I am setting that as the fastest possible time (time it takes for light to reahc the detector)
  *****************************************************/
 void AdjustTC(string Run_Det, Double_t distance_to_detector, Double_t GammaPeakBin){
@@ -391,8 +447,8 @@ void AdjustTC(string Run_Det, Double_t distance_to_detector, Double_t GammaPeakB
 
 	//Differential Time Calibration (unshifted)
 	TH1F *hDiffSpect=new TH1F("hDiffSpect","hDiffSpect",4096,0,4095);
-	read_in_data("/home/mrc/Documents/DrMeiselLab/AlThick/DiffSpect.txt",hDiffSpect);	
-	
+	read_in_data("/home/mrc1104/Documents/DrMeiselLab/AlThick/DiffSpect.txt",hDiffSpect);
+
 	//Vertical Shift
 	Double_t Offset = hDiffSpect->GetBinContent(3500); //cout << Offset << endl;
 	for(Int_t i=350; i<=3500;i++){
@@ -416,14 +472,14 @@ void AdjustTC(string Run_Det, Double_t distance_to_detector, Double_t GammaPeakB
 		}
 	}
 
-	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the 
+	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the
 	const char* yTitle = "Counts";
 	TCanvas *cAdjustDS=new TCanvas("cAdjustDS","cAdjustDS");
 	graph(cAdjustDS,hDiffSpectShifted,xTitle,yTitle);
 
 	//store the Run-Dependant adjusted Diff Spect in a file
 	ofstream AdjustedDiffSpect;
-	AdjustedDiffSpect.open("/home/mrc/Documents/DrMeiselLab/AlThick/" + Run_Det + "_AdjustedTC.txt");
+	AdjustedDiffSpect.open("/home/mrc1104/Documents/DrMeiselLab/AlThick/" + Run_Det + "_AdjustedTC.txt");
 	for(Int_t i=0;i<4096;i++){
 		AdjustedDiffSpect << i << " " << hDiffSpect->GetBinContent(i) << endl;
 	}
@@ -434,18 +490,18 @@ void AdjustTC(string Run_Det, Double_t distance_to_detector, Double_t GammaPeakB
 
 /******************************************************
  * Function: DTLC_Residual()
- * Brief: Creates a residual plot of the Differential Time Calibration and the Linear Calibration 
+ * Brief: Creates a residual plot of the Differential Time Calibration and the Linear Calibration
  *
  * SubFunctions:
  *			graph()
  *
  * Parameters:
  *		TH1F*( hDiffSpect
- * Note: 
+ * Note:
  *****************************************************/
 void DTLC_Residual(TH1F* hDiffSpect){
-	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the 
-	const char* yTitle = "Counts";	
+	const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the
+	const char* yTitle = "Counts";
 	//Values from Linear Time Calibration
 	Double_t Mean1 = 350.186,
 			 Mean2 = 1163.57,
@@ -462,12 +518,12 @@ void DTLC_Residual(TH1F* hDiffSpect){
 	g1->Draw("AP");
 	TH1F *hResidual=new TH1F("hResidual","Residual",4096,0,4095);
 	for(Int_t i=351;i<3501;i++){
-		Double_t diff = hDiffSpect->GetBinContent(i) - g1->Eval(i); 
+		Double_t diff = hDiffSpect->GetBinContent(i) - g1->Eval(i);
 		hResidual->Fill(i,diff);
 	}
 	TCanvas *cResidual=new TCanvas("cResidual","cResidual");
 	graph(cResidual,hResidual,xTitle,yTitle);
-	
+
 
 	return;
 }
@@ -484,19 +540,19 @@ void DTLC_Residual(TH1F* hDiffSpect){
  *		TH1F* histo
  *		string Run_Det
  *		string path_to_shiftedTC
- * Note: 
+ * Note:
  *****************************************************/
 void CountsVsTime(TH1F* histo, string Run_Det, string path_to_shiftedTC){
 	TH1F *hTC=new TH1F("hTC","hTC",4096,0,4095);
 	TH1F *hTVsC=new TH1F("hTVsC","hTVsC",4096,0,4095);
 	read_in_data(path_to_shiftedTC,hTC);
-	/*const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the axis-titles, change these values 
-	const char* yTitle = "Time";	
+	/*const char* xTitle = "Chan"; // const char* is for naming the x-axis; if you wish to change the axis-titles, change these values
+	const char* yTitle = "Time";
 	TCanvas *c100=new TCanvas("c100","c100");
 	graph(c100,hTC,xTitle,yTitle);
-*/
+	*/
 	ofstream fTimeVsChannel;
-	fTimeVsChannel.open("/home/mrc/Documents/DrMeiselLab/AlThick/" + Run_Det + "_TimevsChannel.txt");
+	fTimeVsChannel.open("/home/mrc1104/Documents/DrMeiselLab/AlThick/" + Run_Det + "_TimevsChannel.txt");
 	for(Int_t i=0; i<4096; i++){
 		Double_t Counts = histo->GetBinContent(i);
 		Double_t Time = hTC->GetBinContent(i);
@@ -505,9 +561,9 @@ void CountsVsTime(TH1F* histo, string Run_Det, string path_to_shiftedTC){
 		hTVsC->Fill(Time,Counts);
 		fTimeVsChannel << Time << " " << Counts << endl;
 	}
-	const char* xTitle = "Time"; // const char* is for naming the x-axis; if you wish to change the axis-titles, change these values 
+	const char* xTitle = "Time"; // const char* is for naming the x-axis; if you wish to change the axis-titles, change these values
 	const char* yTitle = "Counts";
-	hTVsC->GetXaxis()->SetRange(5,900);
+	hTVsC->GetXaxis()->SetRange(5,2000);
 	TCanvas *cTvC=new TCanvas("cTvC","cTvC");
 	graph(cTvC,hTVsC,xTitle,yTitle);
 
@@ -524,51 +580,51 @@ void CountsVsTime(TH1F* histo, string Run_Det, string path_to_shiftedTC){
  * Parameters:
  *		string Run_Det
  *		string path_to_CountsVsTime
- * Note: 
+ * Note:
  *****************************************************/
 void DougCode(string Run_Det, string path_to_CountsVsTime){
 
-	
+
 	  ///////// CHECK TO MAKE SURE DETECTOR DISTANCE IS CORRECT //////////////////////////
-		cout << endl; 
-		cout << endl; 
+		cout << endl;
+		cout << endl;
 		cout << "Warning: Double Check to make sure the detector distance is correct in Doug's Code. Line " << __LINE__ << endl;
-		cout << endl;  
-		cout << endl; 
+		cout << endl;
+		cout << endl;
 		///////// CHECK TO MAKE SURE DETECTOR DISTANCE IS CORRECT ///////////////////////////
 
 	TH1F *hTcalib1_120Al=new TH1F("hTcalib1_120Al","hTcalib1_120Al",4096,0,4095);
 	read_in_data(path_to_CountsVsTime,hTcalib1_120Al);
-	
-  //hTcalib1_120Al->Draw();
+
+  	//hTcalib1_120Al->Draw();
 	TH1F *hEcalib1_120Al=new TH1F("hEcalib1_120Al","hEcalib1_120Al",4096,0,4095);
 
-////////////////////////////////////VARIABLES//////////////////////////////////////////////////////////////////////////////////////////////////////
-//VhN relativistic velocties 
+	////////////////////////////////////VARIABLES//////////////////////////////////////////////////////////////////////////////////////////////////////
+	//VhN relativistic velocties
 	Double_t Vh1=0;
-//VlN	bin width // velocity width // uncertainty in velocity
+	//VlN	bin width // velocity width // uncertainty in velocity
 	Double_t Vl1=0;
-//TlN
+	//TlN
 	Double_t Tl1=0;
-//ThN
+	//ThN
 	Double_t Th1=0;
-//AlEBinError
+	//AlEBinError
 	Double_t AlEBinError=0;
-//Tcontent
+	//Tcontent
 	Double_t Tcontent=0;
-//AlTlN
+	//AlTlN
 	Double_t AlTl1=0;
-//AlThN
+	//AlThN
 	Double_t AlTh1=0;
-//Tdifference
+	//Tdifference
 	Double_t Tdifflow=0;
 	Double_t Tdiffhigh=0;
 	Double_t Tdifftot=0;
 	Double_t Ttot=0;
 	Double_t Tratio=0;
 
-//hEcalib1_120Al is an empty histo that he is filling with time vs counts; used for bookkeeping
-  for(int i = 2;i<4096;i++)  { //For Some reason, Th1 (i=0) = inf
+	//hEcalib1_120Al is an empty histo that he is filling with time vs counts; used for bookkeeping
+	for(int i = 2;i<4096;i++)  { //For Some reason, Th1 (i=0) = inf
       							//Initlizing i @ 2 fixes (hotfix?)
 
       // Use lower and upper energy bin edges to calculate related time
@@ -577,29 +633,29 @@ void DougCode(string Run_Det, string path_to_CountsVsTime){
 		//939.55 is the m*c^2 of the neutron
       Vh1 = 3*pow(10,8)*sqrt(1-1/pow(1+((hEcalib1_120Al->GetBinLowEdge(i))/939.55),2));
       Vl1 = 3*pow(10,8)*sqrt(1-1/pow(1+(((hEcalib1_120Al->GetBinLowEdge(i))+(hEcalib1_120Al->GetBinWidth(i)))/939.55),2));
-		
+
 	 /*
 	  ///////// CHECK TO MAKE SURE DETECTOR DISTANCE IS CORRECT //////////////////////////
-		cout << endl; 
-		cout << endl; 
+		cout << endl;
+		cout << endl;
 		cout << "Warning: Double Check to make sure the detector distance is correct in Doug's Code. Line " << __LINE__ << endl;
-		cout << endl;  
-		cout << endl; 
+		cout << endl;
+		cout << endl;
 		///////// CHECK TO MAKE SURE DETECTOR DISTANCE IS CORRECT ///////////////////////////
 		*/
 		//5.0508 is the distance to the detector + half the thickness of the detector :: 0.0508 is the thickness of the detector (I wanna use half of the thickness)
       //	my detector distance is 7m so the numerator is 7.0254
-	  //	my detector distance is 6.93m so the numerator is 6.9554
+	  //	my detector distance is 6.93m so the numerator is 6.9554 <--- Can confirm that X_det = 6.93
       																	//Tl1 = 5.0508/Vl1*pow(10,9);
       //Tl1 = 7.0254/Vl1*pow(10,9);
-      Tl1 = 6.955/Vl1*pow(10,9);
+      Tl1 = 6.9554/Vl1*pow(10,9);
       																	//Th1 = 5.0508/Vh1*pow(10,9);
       //Th1 = 7.0254/Vh1*pow(10,9);
       Th1 = 6.9554/Vh1*pow(10,9);
      // cout << i << https://www.desmos.com/calculator" " << "Vh1 :" << Vh1 << "  |  " <<  "Vl1 :" << Vl1 << "  |  " <<  "Tl1 : " << Tl1 << " | " << "Th1 : " << Th1 << endl;
       ////////////////////////////   NOTE     ///////////////////////////////
       AlEBinError = 0;
-      
+
       //Use time converted from edges of bins to find what TOF bin the Energy edges belong to
       //loop through those time bins
       for(int j = hTcalib1_120Al->FindBin(Tl1);j<hTcalib1_120Al->FindBin(Th1)+1;j++)//This for loop is getting the edge of each Diff TC and is equating it to the energy bin
@@ -608,7 +664,7 @@ void DougCode(string Run_Det, string path_to_CountsVsTime){
 	  //cout <<i << " " << j << " "<<  "Tl1 : " << Tl1 << " | " << "Th1 : " << Th1 << " |  "<< "Tcontent  "<< Tcontent << endl;
 	  //This is actual TOF bin edge, NOT FROM ENERGY
 	  AlTl1 = hTcalib1_120Al->GetBinLowEdge(j);
-	  
+
 	  AlTh1 = AlTl1 + hTcalib1_120Al->GetBinWidth(j);
 	  //
 	  // if Energy bin falls within the same TOF:
@@ -625,13 +681,13 @@ void DougCode(string Run_Det, string path_to_CountsVsTime){
 		  Tdifftot = fabs(Tdifflow+Tdiffhigh);
 		  Ttot = hTcalib1_120Al->GetBinWidth(j);     //Ttot = Th1-Tl1;
 		  Tratio = 1-(Tdifftot/Ttot);
-		  
+
 		  AlEBinError =
 			  sqrt(pow(AlEBinError,2)+pow(Tratio*hTcalib1_120Al->GetBinError(j),2));
 
 		  hEcalib1_120Al->AddBinContent(i,Tratio*Tcontent);
 		  hEcalib1_120Al->SetBinError(i,AlEBinError);
-		  
+
 		  //cout<<i<<"  "<<j<<"  test1     "<<Tratio<<"     "<<Tcontent<<endl;
 		}
 	      else
@@ -652,27 +708,27 @@ void DougCode(string Run_Det, string path_to_CountsVsTime){
 		  Tratio = 1-(Tdifflow/Ttot);
 
 		  AlEBinError = sqrt(pow(AlEBinError,2)+pow(Tratio*hTcalib1_120Al->GetBinError(j),2));
-		  
+
 		  hEcalib1_120Al->AddBinContent(i,Tratio*Tcontent);
 		  hEcalib1_120Al->SetBinError(i,AlEBinError);
 
-		  
+
 		  // cout<<i<<"  "<<j<<"  test2     "<<Tratio<<"     "<<Tcontent<<endl;
 		}
-	
+
 	      else if((AlTh1>Th1)&&(AlTl1<Th1)&&(AlTl1>Tl1))
 		{
 		  Tdiffhigh = fabs(AlTh1-Th1);
 		  Ttot = hTcalib1_120Al->GetBinWidth(j);
 		  //Ttot = Th1-Tl1;
 		  Tratio = 1-(Tdiffhigh/Ttot);
-		  
+
 		  AlEBinError = sqrt(pow(AlEBinError,2)+pow(Tratio*hTcalib1_120Al->GetBinError(j),2));
-		  
+
 		  hEcalib1_120Al->AddBinContent(i,Tratio*Tcontent);
 		  hEcalib1_120Al->SetBinError(i,AlEBinError);
 
-		  
+
 		 // cout<<i<<"  "<<j<<"  test3     "<<Tratio<<"     "<<Tcontent<<endl;
 		}
 	      //
@@ -681,32 +737,32 @@ void DougCode(string Run_Det, string path_to_CountsVsTime){
 		{
 
 		  AlEBinError = sqrt(pow(AlEBinError,2)+pow(hTcalib1_120Al->GetBinError(j),2));
-		  
+
 		  hEcalib1_120Al->AddBinContent(i,Tcontent);
 		  //this increments the height of each bin by 1
 		  hEcalib1_120Al->SetBinError(i,AlEBinError);
-		  
+
 		  //cout<<i<<"  "<<j<<"  test4                "<<Tcontent<<endl;
 
-		 
+
 		}
-	
+
 	    }
 	  //cout <<i << " " << j << " "<<  "Tl1 : " << Tl1 << " | " << "Th1 : " << Th1 << " |  "<< "Tcontent : " << Tcontent << " | " << "Tratio : " << Tratio  << endl;
-	
+
 	}   //ends for loop for the Int_t j
     //cout << " " <<endl;
-//hCvsE->Fill(hEcalib1_120Al->GetBinContent(i),hevt->GetBinContent(i));
+	//hCvsE->Fill(hEcalib1_120Al->GetBinContent(i),hevt->GetBinContent(i));
 
      }  //ends main for loop Int_t i
 	TCanvas *cCVsE =new TCanvas("cCVsE","Counts vs Energy");
 	cCVsE->cd();
 	//hCvsE->Draw("histo");
 	hEcalib1_120Al->Draw("histo");
-	
+
 
 	ofstream fCountsvsEnergy;
-	fCountsvsEnergy.open("/home/mrc/Documents/DrMeiselLab/AlThick/" + Run_Det + "_CountsvsEnergy.txt");
+	fCountsvsEnergy.open("/home/mrc1104/Documents/DrMeiselLab/AlThick/" + Run_Det + "_CountsvsEnergy.txt");
 	for(Int_t k=0;k<4096;k++){
 		fCountsvsEnergy << k << " " << hEcalib1_120Al->GetBinContent(k) << endl;
 		//cout << k << " " <<  hEcalib1_120Al->GetBinContent(k) << endl;
@@ -717,17 +773,82 @@ void DougCode(string Run_Det, string path_to_CountsVsTime){
 } //Doug's Code
 
 
+/******************************************************
+ * Function: void Plot_Saved_Histoy()
+ * Brief: Quick Easybway to plot a saved .txt histo 
+ *
+ * SubFunctions:
+ *	read_in_data()
+ * 	graph()
+ * Parameters:
+ *		string path_to_SavedHisto -- path to saved histogramas a .txt file. 
+ * Note: 
+ *****************************************************/
+void Plot_Saved_Histo(string path_to_savedHisto){
+	TH1F *hSavedHisto=new TH1F("hSavedHisto","SavedHisto",4096,0,4095);
+	read_in_data(path_to_savedHisto, hSavedHisto);
+
+	TCanvas *cSavedHisto=new TCanvas("cSavedHisto","SavedHisto");
+	const char* xTitle = "x"; 	// const char* is for naming the x/y-axis;
+									// if you wish to change the name of the axis, change these
+	const char* yTitle = "y";
+	graph(cSavedHisto,hSavedHisto, xTitle, yTitle) ;
+
+	return;
+}
 
 
 
 
+/******************************************************
+ * Function: void DetecterEfficiency()
+ * Brief: Creates the efficiency of each detector (1 through 3) 
+ *
+ * SubFunctions:
+ *	read_in_data()
+ * 	graph()
+ * Parameters:
+ *		string path_to_CountsVsEnergy -- path to saved histogram of counts vs energy for a particular detector. 
+ * Note: 
+	Incomplete as of 5/12/2020
+ *****************************************************/
+void DetectorEfficiency(string path_to_CountsVsEnergy){
+	
+	
+	TH1F *hCountsVsEnergy=new TH1F("hCountsVsEnergy","Counts Vs Energy",4096,0,4095);
+	read_in_data(path_to_CountsVsEnergy, hCountsVsEnergy);
+	
+	TCanvas *cCountsVsEnergy=new TCanvas("cCountsVsEnergy","Counts Vs Energy");
+	const char* xTitle = "Energy"; 	// const char* is for naming the x/y-axis;
+									// if you wish to change the name of the axis, change these
+	const char* yTitle = "Counts";
+	graph(cCountsVsEnergy,hCountsVsEnergy, xTitle, yTitle) ;
+	
+	Double_t pi = 3.14159;
+	/* 
+		Solid Angle = Dist to Det / area of detector 
+		Distance to Detector: 6.93m
+		Diameter if Detector: 20.5cm
+	*/
+	Double_t Q = 2004;	//OIIIII disk6024 does not have a reported charge are you kidding me
+						// Q = 2004 is taken from disk103 which is another AlThick run
+						cout << "ERROR! wrong formula for solid angle || Line: " << __LINE__ << endl;
+	Double_t solidAngle = ( 6.93 / ( pi * pow( (0.205 / 2.0),2) ) ); //wrong formula! it is area/distance^2
+	// cout << solidAngle << endl;
+
+	TH1F *hEfficiency = new TH1F("hEfficiency","Detector Efficiency",4096,0,4095);
+	vector<double> efficiency;
+	for(Int_t i=0; i<4096;i++){
+		
+		cout << "ERROR! Function 'void DetectorEfficiency is incomplete || Line: " << __LINE__ << endl;
+		return EXIT_FAILURE;
+		// Double_t Efficiency = hCountsVsEnergy / ( /*standard spectrum*/ * Q * solidAngle ); //YParottas's Thesis, Eq. 4.43
+					Double_t Efficiency = 0; //placeholder for now
+		hEfficiency->Fill(i,Efficiency);
+		efficiency.push_back(Efficiency);
+	}
 
 
 
-
-
-
-
-
-
-
+	return;
+}
